@@ -891,7 +891,98 @@ def async_load_api(hass):
     hass.helpers.service.async_register_admin_service(
         DOMAIN, SERVICE_REMOVE, remove, schema=SERVICE_SCHEMAS[IEEE_SERVICE]
     )
+   async def read_zigbee_cluster_attributes(service):
+        """Read zigbee attribute for cluster on zha entity."""
+        zha_gateway = hass.data[DATA_ZHA][DATA_ZHA_GATEWAY]
+        ieee = service.data.get(ATTR_IEEE)
+        endpoint_id = service.data.get(ATTR_ENDPOINT_ID)
+        cluster_id = service.data.get(ATTR_CLUSTER_ID)
+        cluster_type = service.data.get(ATTR_CLUSTER_TYPE)
+        attribute = service.data.get(ATTR_ATTRIBUTE)
+        manufacturer = service.data.get(ATTR_MANUFACTURER) or None
+        zha_device = zha_gateway.get_device(ieee)
+        if cluster_id >= MFG_CLUSTER_ID_START and manufacturer is None:
+            manufacturer = zha_device.manufacturer_code
+        response = None
+        
+        
+        if zha_device is not None:
+            cluster = zha_device.async_get_cluster(
+                endpoint_id, cluster_id, cluster_type=cluster_type
+            )
+            response = await cluster.read_attributes(
+                [attribute], allow_cache=False, only_cache=False, manufacturer=manufacturer
+            )          
+            
+        _LOGGER.debug(
+            "Read attribute for: %s: [%s] %s: [%s] %s: [%s] %s: [%s] %s: [%s] %s: [%s]",
+            ATTR_CLUSTER_ID,
+            cluster_id,
+            ATTR_CLUSTER_TYPE,
+            cluster_type,
+            ATTR_ENDPOINT_ID,
+            endpoint_id,
+            ATTR_ATTRIBUTE,
+            attribute,
+            ATTR_MANUFACTURER,
+            manufacturer,
+            RESPONSE,
+            response,
+        )
 
+    hass.helpers.service.async_register_admin_service(
+        DOMAIN,
+        SERVICE_READ_ZIGBEE_CLUSTER_ATTRIBUTE,
+        read_zigbee_cluster_attributes,
+        schema=SERVICE_SCHEMAS[SERVICE_READ_ZIGBEE_CLUSTER_ATTRIBUTE],
+    )
+    
+    async def read_zigbee_cluster_attributes(service):
+        """Read zigbee attribute for cluster on zha entity."""
+        zha_gateway = hass.data[DATA_ZHA][DATA_ZHA_GATEWAY]
+        ieee = service.data.get(ATTR_IEEE)
+        endpoint_id = service.data.get(ATTR_ENDPOINT_ID)
+        cluster_id = service.data.get(ATTR_CLUSTER_ID)
+        cluster_type = service.data.get(ATTR_CLUSTER_TYPE)
+        attribute = service.data.get(ATTR_ATTRIBUTE)
+        manufacturer = service.data.get(ATTR_MANUFACTURER) or None
+        zha_device = zha_gateway.get_device(ieee)
+        if cluster_id >= MFG_CLUSTER_ID_START and manufacturer is None:
+            manufacturer = zha_device.manufacturer_code
+        response = None
+        
+        
+        if zha_device is not None:
+            cluster = zha_device.async_get_cluster(
+                endpoint_id, cluster_id, cluster_type=cluster_type
+            )
+            response = await cluster.read_attributes(
+                [attribute], allow_cache=False, only_cache=False, manufacturer=manufacturer
+            )          
+            
+        _LOGGER.debug(
+            "Read attribute for: %s: [%s] %s: [%s] %s: [%s] %s: [%s] %s: [%s] %s: [%s]",
+            ATTR_CLUSTER_ID,
+            cluster_id,
+            ATTR_CLUSTER_TYPE,
+            cluster_type,
+            ATTR_ENDPOINT_ID,
+            endpoint_id,
+            ATTR_ATTRIBUTE,
+            attribute,
+            ATTR_MANUFACTURER,
+            manufacturer,
+            RESPONSE,
+            response,
+        )
+
+    hass.helpers.service.async_register_admin_service(
+        DOMAIN,
+        SERVICE_READ_ZIGBEE_CLUSTER_ATTRIBUTE,
+        read_zigbee_cluster_attributes,
+        schema=SERVICE_SCHEMAS[SERVICE_READ_ZIGBEE_CLUSTER_ATTRIBUTE],
+    )
+    
     async def set_zigbee_cluster_attributes(service):
         """Set zigbee attribute for cluster on zha entity."""
         ieee = service.data.get(ATTR_IEEE)
