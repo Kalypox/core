@@ -171,6 +171,16 @@ SERVICE_SCHEMAS = {
             vol.Optional(ATTR_MANUFACTURER): cv.positive_int,
         }
     ),
+    SERVICE_READ_ZIGBEE_CLUSTER_ATTRIBUTE: vol.Schema(
+        {
+            vol.Required(ATTR_IEEE): EUI64.convert,
+            vol.Required(ATTR_ENDPOINT_ID): cv.positive_int,
+            vol.Required(ATTR_CLUSTER_ID): cv.positive_int,
+            vol.Optional(ATTR_CLUSTER_TYPE, default=CLUSTER_TYPE_IN): cv.string,
+            vol.Required(ATTR_ATTRIBUTE): vol.Any(cv.positive_int, str),
+            vol.Optional(ATTR_MANUFACTURER): cv.positive_int,
+        }
+    ),
     SERVICE_ISSUE_ZIGBEE_GROUP_COMMAND: vol.Schema(
         {
             vol.Required(ATTR_GROUP): cv.positive_int,
